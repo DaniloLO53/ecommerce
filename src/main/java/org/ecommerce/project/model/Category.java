@@ -21,6 +21,6 @@ public class Category {
     private Long id;
 
     @NotBlank
-    @Size(min = 2, message = "Name must have at least 2 characters")
+    @Size(min = 2, max = 25, message = "Name must have at least 2 characters and less than 25 characters")
     private String name;
 }
