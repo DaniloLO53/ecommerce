@@ -3,14 +3,10 @@ package org.ecommerce.project.controller;
 import jakarta.validation.Valid;
 import org.ecommerce.project.model.Category;
 import org.ecommerce.project.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,23 +29,13 @@ public class CategoryController {
     }
 
     @PutMapping("/public/categories/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        Category savedCategory = categoryService.updateCategory(id, category);
-        try {
-            return new ResponseEntity<>("Category with id " + category.getId(), HttpStatus.OK);
-
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
-        }
+    public ResponseEntity<String> updateCategory(@PathVariable Long id, @Valid @RequestBody Category category) {
+        categoryService.updateCategory(id, category);
+        return new ResponseEntity<>("Category with id " + category.getId() + " updated", HttpStatus.OK);
     }
 
     @DeleteMapping("/public/categories/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
-        try {
-            return new ResponseEntity<>(categoryService.deleteCategory(id), HttpStatus.OK);
-
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
-        }
+        return new ResponseEntity<>(categoryService.deleteCategory(id), HttpStatus.OK);
     }
 }
