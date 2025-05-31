@@ -45,11 +45,11 @@ public class CategoryService implements CategoryServiceInterface {
     }
 
     @Override
-    public String deleteCategory(Long id) {
+    public CategoryDTO deleteCategory(Long id) {
         Optional<Category> optionalSavedCategory = categoryRepository.findById(id);
         if (optionalSavedCategory.isPresent()) {
             categoryRepository.deleteById(id);
-            return "Category with id " + id + " has been deleted";
+            return modelMapper.map(optionalSavedCategory.get(), CategoryDTO.class);
         }
         throw new ResourceNotFoundException("Category", "id", id);
     }

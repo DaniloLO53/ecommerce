@@ -1,15 +1,12 @@
 package org.ecommerce.project.controller;
 
 import jakarta.validation.Valid;
-import org.ecommerce.project.model.Category;
 import org.ecommerce.project.payload.CategoryDTO;
 import org.ecommerce.project.payload.CategoryResponse;
 import org.ecommerce.project.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -31,7 +28,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/public/categories/{id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long id) {
         return new ResponseEntity<>(categoryService.deleteCategory(id), HttpStatus.CREATED);
     }
 
