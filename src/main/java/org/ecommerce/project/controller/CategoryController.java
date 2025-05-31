@@ -2,6 +2,7 @@ package org.ecommerce.project.controller;
 
 import jakarta.validation.Valid;
 import org.ecommerce.project.model.Category;
+import org.ecommerce.project.payload.CategoryResponse;
 import org.ecommerce.project.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories")
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<CategoryResponse> getAllCategories() {
         return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
 

@@ -3,8 +3,10 @@ package org.ecommerce.project.service;
 import org.ecommerce.project.exception.APIException;
 import org.ecommerce.project.exception.ResourceNotFoundException;
 import org.ecommerce.project.model.Category;
+import org.ecommerce.project.payload.CategoryDTO;
 import org.ecommerce.project.payload.CategoryResponse;
 import org.ecommerce.project.repository.CategoryRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,14 +15,22 @@ import java.util.Optional;
 @Service
 public class CategoryService implements CategoryServiceInterface {
     private CategoryRepository categoryRepository;
+    private ModelMapper modelMapper;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ModelMapper modelMapper) {
         this.categoryRepository = categoryRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
     public CategoryResponse getAllCategories() {
-        return categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAll();
+        List<CategoryDTO> categoryDTOS = categories.stream()
+                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .toList();
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setContent(categoryDTOS);
+        return categoryResponse;
     }
 
     @Override
