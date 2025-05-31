@@ -23,17 +23,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<String> customAPIException(APIException e) {
+        String message = e.getMessage();
+
+        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> customResourceNotFoundException(ResourceNotFoundException e) {
         String message = e.getMessage();
 
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(APIException.class)
-    public ResponseEntity<String> customAPIExceptionException(APIException e) {
-        String message = e.getMessage();
-
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }
