@@ -1,6 +1,7 @@
 package org.ecommerce.project.controller;
 
 import jakarta.validation.Valid;
+import org.ecommerce.project.config.AppConstants;
 import org.ecommerce.project.payload.CategoryDTO;
 import org.ecommerce.project.payload.CategoryResponse;
 import org.ecommerce.project.service.CategoryService;
@@ -18,8 +19,13 @@ public class CategoryController {
     }
 
     @GetMapping("/public/categories")
-    public ResponseEntity<CategoryResponse> getAllCategories() {
-        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
+    public ResponseEntity<CategoryResponse> getAllCategories(
+            @RequestParam(name = "pageNumber",defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIRECTION, required = false) String sortOrder
+    ) {
+        return new ResponseEntity<>(categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortOrder), HttpStatus.OK);
     }
 
     @PostMapping("/public/categories")
