@@ -36,7 +36,7 @@ public class CategoryController {
     }
 
     @PutMapping("/public/categories/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable Long id, @Valid @RequestBody Category category) {
-        return new ResponseEntity<>(categoryService.updateCategory(id, category), HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDTO categoryDTO) {
+        return new ResponseEntity<>(categoryService.updateCategory(id, categoryDTO), HttpStatus.CREATED);
     }
 }
