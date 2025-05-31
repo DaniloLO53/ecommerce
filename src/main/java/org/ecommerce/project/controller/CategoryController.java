@@ -2,6 +2,7 @@ package org.ecommerce.project.controller;
 
 import jakarta.validation.Valid;
 import org.ecommerce.project.model.Category;
+import org.ecommerce.project.payload.CategoryDTO;
 import org.ecommerce.project.payload.CategoryResponse;
 import org.ecommerce.project.service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,8 @@ public class CategoryController {
     }
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
-        return new ResponseEntity<>(categoryService.createCategory(category), HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        return new ResponseEntity<>(categoryService.createCategory(categoryDTO), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/public/categories/{id}")

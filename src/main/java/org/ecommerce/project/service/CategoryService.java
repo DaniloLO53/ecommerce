@@ -34,13 +34,14 @@ public class CategoryService implements CategoryServiceInterface {
     }
 
     @Override
-    public String createCategory(Category category) {
-        Category exitstingCategory = categoryRepository.findByName(category.getName());
-        if (exitstingCategory == null) {
-            categoryRepository.save(category);
-            return "Category '" + category.getName() + "' has been created";
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+        Category category = modelMapper.map(categoryDTO, Category.class);
+        Category existingCategory = categoryRepository.findByName(categoryDTO.getName());
+        if (existingCategory == null) {
+            Category savedCategory = categoryRepository.save(category);
+            return modelMapper.map(savedCategory, CategoryDTO.class);
         }
-        throw new APIException("Category with name " + category.getName() + " already exists");
+        throw new APIException("Category with name " + existingCategory.getName() + " already exists");
     }
 
     @Override
