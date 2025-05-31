@@ -1,5 +1,6 @@
 package org.ecommerce.project.controller;
 
+import jakarta.validation.Valid;
 import org.ecommerce.project.model.Category;
 import org.ecommerce.project.service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class CategoryController {
     }
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> createCategory(@RequestBody Category category) {
+    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
         return new ResponseEntity<>(categoryService.createCategory(category), HttpStatus.CREATED);
     }
 
@@ -33,7 +34,7 @@ public class CategoryController {
     }
 
     @PutMapping("/public/categories/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+    public ResponseEntity<String> updateCategory(@PathVariable Long id, @Valid @RequestBody Category category) {
         return new ResponseEntity<>(categoryService.updateCategory(id, category), HttpStatus.CREATED);
     }
 }

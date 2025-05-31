@@ -3,6 +3,7 @@ package org.ecommerce.project.service;
 import org.ecommerce.project.exception.APIException;
 import org.ecommerce.project.exception.ResourceNotFoundException;
 import org.ecommerce.project.model.Category;
+import org.ecommerce.project.payload.CategoryResponse;
 import org.ecommerce.project.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class CategoryService implements CategoryServiceInterface {
     }
 
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
         return categoryRepository.findAll();
     }
 
