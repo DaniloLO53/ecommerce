@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
             String message = err.getDefaultMessage();
             response.put(field, message);
         });
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(APIException.class)
