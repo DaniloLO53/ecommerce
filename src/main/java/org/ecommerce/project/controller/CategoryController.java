@@ -25,21 +25,21 @@ public class CategoryController {
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIRECTION, required = false) String sortOrder
     ) {
-        return new ResponseEntity<>(categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortOrder), HttpStatus.OK);
+        return ResponseEntity.ok(categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @PostMapping("/public/categories")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
-        return new ResponseEntity<>(categoryService.createCategory(categoryDTO), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryDTO));
     }
 
     @DeleteMapping("/public/categories/{id}")
     public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long id) {
-        return new ResponseEntity<>(categoryService.deleteCategory(id), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.deleteCategory(id));
     }
 
     @PutMapping("/public/categories/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDTO categoryDTO) {
-        return new ResponseEntity<>(categoryService.updateCategory(id, categoryDTO), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.updateCategory(id, categoryDTO));
     }
 }
