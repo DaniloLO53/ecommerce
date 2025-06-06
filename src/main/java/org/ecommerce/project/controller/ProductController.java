@@ -1,7 +1,9 @@
 package org.ecommerce.project.controller;
 
 import jakarta.validation.Valid;
+import org.ecommerce.project.config.AppConstants;
 import org.ecommerce.project.payload.DTOs.ProductDTO;
+import org.ecommerce.project.payload.responses.ProductResponse;
 import org.ecommerce.project.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,16 @@ public class ProductController {
 
     public ProductController(ProductService productService) {
         this.productService = productService;
+    }
+
+    @GetMapping("/public/products")
+    public ResponseEntity<ProductResponse> getAllProducts(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortDirection", defaultValue = AppConstants.SORT_DIRECTION, required = false) String sortDirection
+            ) {
+        return ResponseEntity.ok(productService.getAllProducts(pageNumber, pageSize, sortBy, sortDirection));
     }
 
     @PostMapping("/admin/categories/{categoryId}/product")

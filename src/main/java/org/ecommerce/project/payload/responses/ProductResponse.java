@@ -3,7 +3,7 @@ package org.ecommerce.project.payload.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ecommerce.project.model.Product;
+import org.ecommerce.project.payload.DTOs.ProductDTO;
 
 import java.util.List;
 
@@ -11,5 +11,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductResponse {
-    private List<Product> content;
+    private List<ProductDTO> content;
+    private Integer pageNumber;
+    private Integer pageSize;
+    private Long totalElements;
+    private Integer totalPages;
+    private Boolean lastPage;
 }
