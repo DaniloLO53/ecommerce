@@ -3,7 +3,6 @@ package org.ecommerce.project.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.ecommerce.project.config.AppConstants;
-import org.ecommerce.project.config.enums.ProductSortBy;
 import org.ecommerce.project.payload.DTOs.ProductDTO;
 import org.ecommerce.project.payload.responses.ProductResponse;
 import org.ecommerce.project.service.ProductService;
@@ -28,9 +27,9 @@ public class ProductController {
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false)
             @Pattern(regexp = "id|price", message = "sortBy field must have values: 'id' or 'price'") String sortBy,
-            @RequestParam(name = "sortDirection", defaultValue = AppConstants.SORT_DIRECTION, required = false) String sortDirection
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
             ) {
-        return ResponseEntity.ok(productService.getAllProducts(pageNumber, pageSize, sortBy, sortDirection));
+        return ResponseEntity.ok(productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/public/categories/{categoryId}/products")
@@ -40,9 +39,9 @@ public class ProductController {
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false)
             @Pattern(regexp = "id|price", message = "sortBy field must have values: 'id' or 'price'") String sortBy,
-            @RequestParam(name = "sortDirection", defaultValue = AppConstants.SORT_DIRECTION, required = false) String sortDirection
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
             ) {
-        return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageNumber, pageSize, sortBy, sortDirection));
+        return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @PostMapping("/admin/categories/{categoryId}/product")

@@ -29,8 +29,8 @@ public class ProductService implements ProductServiceInterface {
         this.modelMapper = modelMapper;
     }
 
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
-        Sort sort = sortDirection.equalsIgnoreCase("asc")
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
@@ -39,13 +39,13 @@ public class ProductService implements ProductServiceInterface {
         return getProductResponse(pageNumber, pageSize, page);
     }
 
-    public ProductResponse getProductsByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
+    public ProductResponse getProductsByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
 
         if (optionalCategory.isPresent()) {
             Category category = optionalCategory.get();
 
-            Sort sort = sortDirection.equalsIgnoreCase("asc")
+            Sort sort = sortOrder.equalsIgnoreCase("asc")
                     ? Sort.by(sortBy).ascending()
                     : Sort.by(sortBy).descending();
 
