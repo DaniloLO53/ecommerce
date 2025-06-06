@@ -36,6 +36,44 @@ public class ProductService implements ProductServiceInterface {
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
         Page<Product> page = productRepository.findAll(pageDetails);
+        return getProductResponse(pageNumber, pageSize, page);
+    }
+
+    public ProductResponse getProductsByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+
+        if (optionalCategory.isPresent()) {
+            Category category = optionalCategory.get();
+
+            Sort sort = sortDirection.equalsIgnoreCase("asc")
+                    ? Sort.by(sortBy).ascending()
+                    : Sort.by(sortBy).descending();
+
+            Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
+            Page<Product> page = productRepository.findByCategory(category, pageDetails);
+            return getProductResponse(pageNumber, pageSize, page);
+        }
+
+        throw new ResourceNotFoundException("Category", "id", categoryId);
+    }
+
+    public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
+        Product product = modelMapper.map(productDTO, Product.class);
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+
+        if (optionalCategory.isPresent()) {
+            product.setCategory(optionalCategory.get());
+
+            Double specialPrice = product.getPrice() - product.getDiscount();
+            product.setSpecialPrice(specialPrice);
+
+            Product savedProduct = productRepository.save(product);
+            return modelMapper.map(savedProduct, ProductDTO.class);
+        }
+        throw new ResourceNotFoundException("Category", "id", categoryId);
+    }
+
+    private ProductResponse getProductResponse(Integer pageNumber, Integer pageSize, Page<Product> page) {
         List<Product> products = page.getContent();
 
         List<ProductDTO> productDTOS = products.stream()
@@ -51,21 +89,5 @@ public class ProductService implements ProductServiceInterface {
         productResponse.setLastPage(page.isLast());
 
         return productResponse;
-    }
-
-    public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
-        Product product = modelMapper.map(productDTO, Product.class);
-        Optional<Category> category = categoryRepository.findById(categoryId);
-
-        if (category.isPresent()) {
-            product.setCategory(category.get());
-
-            Double specialPrice = product.getPrice() - product.getDiscount();
-            product.setSpecialPrice(specialPrice);
-
-            Product savedProduct = productRepository.save(product);
-            return modelMapper.map(savedProduct, ProductDTO.class);
-        }
-        throw new ResourceNotFoundException("Category", "id", categoryId);
     }
 }
