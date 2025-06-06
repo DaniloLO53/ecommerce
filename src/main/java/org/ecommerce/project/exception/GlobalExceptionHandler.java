@@ -1,6 +1,6 @@
 package org.ecommerce.project.exception;
 
-import org.ecommerce.project.payload.APIResponse;
+import org.ecommerce.project.payload.responses.APIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

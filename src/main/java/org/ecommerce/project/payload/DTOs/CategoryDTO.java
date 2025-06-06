@@ -1,4 +1,4 @@
-package org.ecommerce.project.payload;
+package org.ecommerce.project.payload.DTOs;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
