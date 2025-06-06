@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -69,5 +70,13 @@ public class ProductController {
     @DeleteMapping("/admin/products/{productId}")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.deleteProduct(productId));
+    }
+
+    @PutMapping("/products/{productId}/image")
+    public ResponseEntity<ProductDTO> updateProductImage(
+            @PathVariable Long productId,
+            @RequestParam(name = "image") MultipartFile image
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.updateProductImage(productId, image));
     }
 }
