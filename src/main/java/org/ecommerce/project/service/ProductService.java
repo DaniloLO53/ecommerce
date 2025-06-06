@@ -57,6 +57,16 @@ public class ProductService implements ProductServiceInterface {
         throw new ResourceNotFoundException("Category", "id", categoryId);
     }
 
+    public ProductResponse getProductsByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Product> page = productRepository.findByTitleLikeIgnoreCase('%' + keyword + '%', pageDetails);
+        return getProductResponse(pageNumber, pageSize, page);
+    }
+
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Product product = modelMapper.map(productDTO, Product.class);
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);

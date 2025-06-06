@@ -28,7 +28,7 @@ public class ProductController {
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false)
             @Pattern(regexp = "id|price", message = "sortBy field must have values: 'id' or 'price'") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
-            ) {
+    ) {
         return ResponseEntity.ok(productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder));
     }
 
@@ -40,12 +40,25 @@ public class ProductController {
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false)
             @Pattern(regexp = "id|price", message = "sortBy field must have values: 'id' or 'price'") String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
-            ) {
+    ) {
         return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder));
+    }
+
+    @GetMapping("/public/products/keyword/{keyword}")
+    public ResponseEntity<ProductResponse> getProductsByKeyword(
+            @PathVariable String keyword,
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false)
+            @Pattern(regexp = "id|price", message = "sortBy field must have values: 'id' or 'price'") String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
+    ) {
+        return ResponseEntity.ok(productService.getProductsByKeyword(keyword, pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@PathVariable Long categoryId, @Valid @RequestBody ProductDTO productDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(categoryId, productDTO));
     }
+
 }
