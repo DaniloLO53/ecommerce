@@ -120,4 +120,15 @@ public class ProductService implements ProductServiceInterface {
 
         return productResponse;
     }
+
+    public ProductDTO deleteProduct(Long productId) {
+        Optional<Product> optionalExistingProduct = productRepository.findById(productId);
+
+        if (optionalExistingProduct.isPresent()) {
+            productRepository.deleteById(productId);
+            return modelMapper.map(optionalExistingProduct.get(), ProductDTO.class);
+        }
+
+        throw new ResourceNotFoundException("Product", "id", productId);
+    }
 }
