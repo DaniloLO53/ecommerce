@@ -1,4 +1,4 @@
-package org.ecommerce.project.payload.DTOs;
+package org.ecommerce.project.payloads.DTOs;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,6 +13,6 @@ public class CategoryDTO {
     private Long id;
 
     @NotBlank
-    @Size(min = 2, max = 30, message = "Must have between 2 and 30 characters")
+    @Size(min = 3, max = 30, message = "Category name must have between 3 and 30 characters")
     private String name;
 }

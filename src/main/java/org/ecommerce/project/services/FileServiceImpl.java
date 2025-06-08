@@ -1,4 +1,4 @@
-package org.ecommerce.project.service;
+package org.ecommerce.project.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +13,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
-public class FileService implements FileServiceInterface {
+public class FileServiceImpl implements FileService {
     public String uploadImage(String path, MultipartFile imageFile) throws IOException {
         String randomUUID = UUID.randomUUID().toString();
         String originalFileName = imageFile.getOriginalFilename();

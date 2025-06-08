@@ -1,4 +1,4 @@
-package org.ecommerce.project.model;
+package org.ecommerce.project.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -16,11 +16,11 @@ import java.util.Set;
 @AllArgsConstructor
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
-    @Size(min = 2, max = 30, message = "Must have between 2 and 30 characters")
+    @Size(min = 3, max = 30, message = "Category name must have between 3 and 30 characters")
     private String name;
 
     @OneToMany(mappedBy = "category")

@@ -1,11 +1,11 @@
-package org.ecommerce.project.controller;
+package org.ecommerce.project.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.ecommerce.project.config.AppConstants;
-import org.ecommerce.project.payload.DTOs.ProductDTO;
-import org.ecommerce.project.payload.responses.ProductResponse;
-import org.ecommerce.project.service.ProductService;
+import org.ecommerce.project.payloads.DTOs.ProductDTO;
+import org.ecommerce.project.payloads.responses.PageResponse;
+import org.ecommerce.project.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,43 +16,43 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api")
 @Validated
 public class ProductController {
-    private ProductService productService;
+    private final ProductService productService;
 
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping("/public/products")
-    public ResponseEntity<ProductResponse> getAllProducts(
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false)
+    public ResponseEntity<PageResponse<ProductDTO>> getAllProducts(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.Product.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.Product.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.Product.SORT_BY, required = false)
             @Pattern(regexp = "id|price", message = "sortBy field must have values: 'id' or 'price'") String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.Product.SORT_ORDER, required = false) String sortOrder
     ) {
         return ResponseEntity.ok(productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/public/categories/{categoryId}/products")
-    public ResponseEntity<ProductResponse> getProductsByCategory(
+    public ResponseEntity<PageResponse<ProductDTO>> getProductsByCategory(
             @PathVariable Long categoryId,
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false)
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.Product.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.Product.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.Product.SORT_BY, required = false)
             @Pattern(regexp = "id|price", message = "sortBy field must have values: 'id' or 'price'") String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.Product.SORT_ORDER, required = false) String sortOrder
     ) {
         return ResponseEntity.ok(productService.getProductsByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/public/products/keyword/{keyword}")
-    public ResponseEntity<ProductResponse> getProductsByKeyword(
+    public ResponseEntity<PageResponse<ProductDTO>> getProductsByKeyword(
             @PathVariable String keyword,
-            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY, required = false)
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.Product.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.Product.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.Product.SORT_BY, required = false)
             @Pattern(regexp = "id|price", message = "sortBy field must have values: 'id' or 'price'") String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.Product.SORT_ORDER, required = false) String sortOrder
     ) {
         return ResponseEntity.ok(productService.getProductsByKeyword(keyword, pageNumber, pageSize, sortBy, sortOrder));
     }
@@ -63,7 +63,7 @@ public class ProductController {
     }
 
     @PutMapping("/admin/products/{productId}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long productId, @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long productId, @Valid @RequestBody ProductDTO productDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(productId, productDTO));
     }
 

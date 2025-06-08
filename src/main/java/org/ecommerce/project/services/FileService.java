@@ -1,9 +1,9 @@
-package org.ecommerce.project.service;
+package org.ecommerce.project.services;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-public interface FileServiceInterface {
+public interface FileService {
     String uploadImage(String path, MultipartFile imageFile) throws IOException;
 }
