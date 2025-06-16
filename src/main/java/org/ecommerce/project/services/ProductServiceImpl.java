@@ -22,10 +22,10 @@ import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-    private ProductRepository productRepository;
-    private CategoryRepository categoryRepository;
-    private FileService fileService;
-    private ModelMapper modelMapper;
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final FileService fileService;
+    private final ModelMapper modelMapper;
     @Value("${project.image}")
     private String path;
 
@@ -44,20 +44,8 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Product> page = productRepository.findAll(pageDetails);
-        List<Product> products = page.getContent();
 
-        List<ProductDTO> productDTOS = products.stream()
-                .map(product -> modelMapper.map(product, ProductDTO.class))
-                .toList();
-        PageResponse<ProductDTO> productResponse = new PageResponse<>();
-        productResponse.setContent(productDTOS);
-        productResponse.setPageNumber(page.getNumber());
-        productResponse.setPageSize(page.getSize());
-        productResponse.setTotalElements(page.getTotalElements());
-        productResponse.setTotalPages(page.getTotalPages());
-        productResponse.setLastPage(page.isLast());
-
-        return productResponse;
+        return getProductResponse(pageNumber, pageSize, page);
     }
 
     public PageResponse<ProductDTO> getProductsByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
