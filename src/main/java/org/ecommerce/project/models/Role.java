@@ -1,13 +1,12 @@
 package org.ecommerce.project.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity(name = "roles")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Role {
     public Role(RoleName roleName) {
@@ -19,6 +18,7 @@ public class Role {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @ToString.Exclude
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name")
     private RoleName roleName;

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -55,6 +56,7 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true, mappedBy = "user")
+    @ToString.Exclude
     private Set<Product> products;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
