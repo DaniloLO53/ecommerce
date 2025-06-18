@@ -1,7 +1,8 @@
 package org.ecommerce.project.controllers;
 
 import jakarta.validation.Valid;
-import org.ecommerce.project.exceptions.APIException;
+import org.ecommerce.project.exceptions.APIBadRequestException;
+import org.ecommerce.project.exceptions.APIConflictException;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
 import org.ecommerce.project.models.Role;
 import org.ecommerce.project.models.RoleName;
@@ -94,7 +95,7 @@ public class AuthController {
         Boolean emailAlreadyExists = userRepository.existsByEmail(signupRequest.getEmail());
 
         if (usernameAlreadyExists || emailAlreadyExists) {
-            throw new APIException("Username or email already exists");
+            throw new APIConflictException("Username or email already exists");
         }
 
         // TODO: optimize to make only one request to db and change switch-case to a streams solution (convert strings set to enums set)
