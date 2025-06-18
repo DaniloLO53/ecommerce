@@ -49,11 +49,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
     }
 
-    @ExceptionHandler(APIException.class)
-    public ResponseEntity<APIResponse> customAPIException(APIException e) {
+    @ExceptionHandler(APIBadRequestException.class)
+    public ResponseEntity<APIResponse> customAPIBadRequestException(APIBadRequestException e) {
         String message = e.getMessage();
         APIResponse apiResponse = new APIResponse(message);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
+
+    @ExceptionHandler(APIConflictException.class)
+    public ResponseEntity<APIResponse> customAPIConflictException(APIConflictException e) {
+        String message = e.getMessage();
+        APIResponse apiResponse = new APIResponse(message);
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
     }
 }
