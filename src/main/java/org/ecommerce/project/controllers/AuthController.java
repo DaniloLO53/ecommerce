@@ -15,13 +15,16 @@ import org.ecommerce.project.repositories.RoleRepository;
 import org.ecommerce.project.repositories.UserRepository;
 import org.ecommerce.project.security.jwt.JwtUtils;
 import org.ecommerce.project.security.services.UserDetailsImpl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,19 +69,21 @@ public class AuthController {
             return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
         }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        String jwtToken = jwtUtils.generateTokenFromUserName(userDetails);
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        LoginResponse response = new LoginResponse(userDetails.getId(), userDetails.getUsername(), roles, jwtToken);
+        LoginResponse response = new LoginResponse(userDetails.getId(), userDetails.getUsername(), roles);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
     }
 
     @PostMapping("/signup")
@@ -90,7 +95,6 @@ public class AuthController {
         Set<String> strRoles = signupRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 
-
         Boolean usernameAlreadyExists = userRepository.existsByUserName(signupRequest.getUsername());
         Boolean emailAlreadyExists = userRepository.existsByEmail(signupRequest.getEmail());
 
@@ -99,6 +103,30 @@ public class AuthController {
         }
 
         // TODO: optimize to make only one request to db and change switch-case to a streams solution (convert strings set to enums set)
+//        public Set<Role> mapRolesOptimized(Set<String> strRoles) {
+//    if (strRoles == null || strRoles.isEmpty()) {
+//        // Lógica para role padrão continua a mesma
+//        return Set.of(roleRepository.findByRoleName(RoleName.ROLE_USER)
+//                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", RoleName.ROLE_USER.name())));
+//    }
+//
+//    // 1. Converte a lista de Strings para uma lista de Enums
+//    Set<RoleName> roleNames = strRoles.stream()
+//            .map(roleStr -> RoleName.valueOf("ROLE_" + roleStr.toUpperCase()))
+//            .collect(Collectors.toSet());
+//
+//    // 2. Faz UMA ÚNICA consulta ao banco para buscar todas as roles
+//    Set<Role> foundRoles = roleRepository.findAllByRoleNameIn(roleNames);
+//
+//    // 3. (Opcional, mas recomendado) Verifica se todas as roles pedidas foram encontradas
+//    if (foundRoles.size() != roleNames.size()) {
+//        // Lançar uma exceção aqui se alguma role não foi encontrada no banco
+//        throw new ResourceNotFoundException("Role", "name", "Uma ou mais roles especificadas não foram encontradas no banco de dados.");
+//    }
+//
+//    return foundRoles;
+//    }
+
         if (strRoles == null || strRoles.isEmpty()) {
             Role userRole = roleRepository
                     .findByRoleName(RoleName.ROLE_USER)
