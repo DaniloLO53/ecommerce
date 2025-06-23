@@ -1,7 +1,6 @@
 package org.ecommerce.project.controllers;
 
 import jakarta.validation.Valid;
-import org.ecommerce.project.exceptions.APIBadRequestException;
 import org.ecommerce.project.exceptions.APIConflictException;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
 import org.ecommerce.project.models.Role;
@@ -27,10 +26,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,6 +80,24 @@ public class AuthController {
         LoginResponse response = new LoginResponse(userDetails.getId(), userDetails.getUsername(), roles);
 
         return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
+    }
+
+    @GetMapping("/me/username")
+    public String currentUsername(Authentication authentication) {
+        return authentication != null ? authentication.getName() : "NULL";
+    }
+
+    @GetMapping("/me/user")
+    public ResponseEntity<LoginResponse> currentUserDetails(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        LoginResponse response = new LoginResponse(userDetails.getId(), userDetails.getUsername(), roles);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/signup")
