@@ -40,4 +40,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private User user;
+
+    @OneToOne(mappedBy = "product")
+    private CartProductMetadata cartProductMetadata;
 }
