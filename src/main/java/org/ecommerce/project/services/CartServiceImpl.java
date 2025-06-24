@@ -13,6 +13,7 @@ import org.ecommerce.project.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,25 +36,34 @@ public class CartServiceImpl implements CartService {
     }
 
     public CartDTO addProductToCart(Long userId, Long productId, Integer quantity) {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
+        Cart userCart = cartRepository.findCartByUser_Id(userId);
 
-            Cart userCart = cartRepository.findCartByUser_Id(userId);
+        Optional<CartProductMetadata> existingMetadata = userCart.getCartsProductsMetadata().stream()
+                .filter(metadata -> metadata.getProduct().getId().equals(productId))
+                .findFirst();
 
-            CartProductMetadata cartProductMetadata = new CartProductMetadata();
-            cartProductMetadata.setProduct(product);
-            cartProductMetadata.setQuantity(quantity);
-            cartProductMetadata.setCart(userCart);
-
-            userCart.getCartsProductsMetadata().add(cartProductMetadata);
-
-            Cart savedCart = cartRepository.save(userCart);
-
-            return modelMapper.map(savedCart, CartDTO.class);
+        if (existingMetadata.isPresent()) {
+            CartProductMetadata metadataToUpdate = existingMetadata.get();
+            metadataToUpdate.setQuantity(metadataToUpdate.getQuantity() + quantity);
+        } else {
+            CartProductMetadata newMetadata = new CartProductMetadata();
+            newMetadata.setProduct(product);
+            newMetadata.setQuantity(quantity);
+            newMetadata.setCart(userCart);
+            userCart.getCartsProductsMetadata().add(newMetadata);
         }
 
-        throw new ResourceNotFoundException("Product", "id", productId);
+        Cart savedCart = cartRepository.save(userCart);
+
+        return modelMapper.map(savedCart, CartDTO.class);
+    }
+
+    @Override
+    public List<CartDTO> getAllCarts() {
+        List<Cart> carts = cartRepository.findAll();
+        return carts.stream().map(cart -> modelMapper.map(cart, CartDTO.class)).toList();
     }
 }
