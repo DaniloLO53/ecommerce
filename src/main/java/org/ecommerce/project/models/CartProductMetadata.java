@@ -23,7 +23,7 @@ public class CartProductMetadata {
     private Product product;
 
     @Positive
-    private Long quantity;
+    private Integer quantity;
 
     @ManyToMany(mappedBy = "cartProductMetadata")
     @ToString.Exclude
