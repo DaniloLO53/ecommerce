@@ -50,15 +50,23 @@ public class CartServiceImpl implements CartService {
             metadataToUpdate.setQuantity(metadataToUpdate.getQuantity() + quantity);
         } else {
             CartProductMetadata newMetadata = new CartProductMetadata();
+
             newMetadata.setProduct(product);
             newMetadata.setQuantity(quantity);
             newMetadata.setCart(userCart);
+
             userCart.getCartsProductsMetadata().add(newMetadata);
         }
 
         Cart savedCart = cartRepository.save(userCart);
 
         return modelMapper.map(savedCart, CartDTO.class);
+    }
+
+    @Override
+    public CartDTO getUserCart(Long userId) {
+        Cart cart = cartRepository.findCartByUser_Id(userId);
+        return modelMapper.map(cart, CartDTO.class);
     }
 
     @Override
