@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class CartController {
@@ -26,5 +28,10 @@ public class CartController {
         Long userId = userDetails.getId();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addProductToCart(userId, productId, quantity));
+    }
+
+    @GetMapping("/carts")
+    public ResponseEntity<List<CartDTO>> getAllCarts() {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.getAllCarts());
     }
 }

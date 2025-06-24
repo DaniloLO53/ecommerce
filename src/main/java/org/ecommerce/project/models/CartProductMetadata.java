@@ -19,7 +19,7 @@ public class CartProductMetadata {
     private Long id;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
     private Product product;
 
     @Positive(message = "Quantity must be a positive number")
