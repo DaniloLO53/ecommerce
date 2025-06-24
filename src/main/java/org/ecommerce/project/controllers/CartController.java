@@ -30,6 +30,14 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addProductToCart(userId, productId, quantity));
     }
 
+    @GetMapping("/carts/users/cart")
+    public ResponseEntity<CartDTO> getUserCart(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.getUserCart(userId));
+    }
+
     @GetMapping("/carts")
     public ResponseEntity<List<CartDTO>> getAllCarts() {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.getAllCarts());
