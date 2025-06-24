@@ -3,6 +3,7 @@ package org.ecommerce.project.controllers;
 import jakarta.validation.Valid;
 import org.ecommerce.project.exceptions.APIConflictException;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
+import org.ecommerce.project.models.Cart;
 import org.ecommerce.project.models.Role;
 import org.ecommerce.project.models.RoleName;
 import org.ecommerce.project.models.User;
@@ -10,6 +11,7 @@ import org.ecommerce.project.payloads.responses.APIResponse;
 import org.ecommerce.project.payloads.responses.LoginRequest;
 import org.ecommerce.project.payloads.responses.LoginResponse;
 import org.ecommerce.project.payloads.responses.SignupRequest;
+import org.ecommerce.project.repositories.CartRepository;
 import org.ecommerce.project.repositories.RoleRepository;
 import org.ecommerce.project.repositories.UserRepository;
 import org.ecommerce.project.security.jwt.JwtUtils;
@@ -39,17 +41,21 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final CartRepository cartRepository;
 
     public AuthController(JwtUtils jwtUtils,
                           PasswordEncoder passwordEncoder,
                           AuthenticationManager authenticationManager,
                           UserRepository userRepository,
-                          RoleRepository roleRepository) {
+                          RoleRepository roleRepository,
+                          CartRepository cartRepository
+                          ) {
         this.jwtUtils = jwtUtils;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.cartRepository = cartRepository;
     }
 
     @PostMapping("/signin")
@@ -88,6 +94,7 @@ public class AuthController {
     }
 
     @GetMapping("/me/user")
+    // Spring gets authentication automatically from the cookies (or headers)
     public ResponseEntity<LoginResponse> currentUserDetails(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
@@ -181,8 +188,12 @@ public class AuthController {
         }
 
         User user = new User(username, email, passwordEncoder.encode(password));
+        Cart cart = new Cart(user);
+
         user.setRoles(roles);
+
         userRepository.save(user);
+        cartRepository.save(cart);
 
         return ResponseEntity.status(HttpStatus.OK).body(new APIResponse("User has been created successfully"));
     }

@@ -1,8 +1,10 @@
 package org.ecommerce.project.security;
 
+import org.ecommerce.project.models.Cart;
 import org.ecommerce.project.models.Role;
 import org.ecommerce.project.models.RoleName;
 import org.ecommerce.project.models.User;
+import org.ecommerce.project.repositories.CartRepository;
 import org.ecommerce.project.repositories.RoleRepository;
 import org.ecommerce.project.repositories.UserRepository;
 import org.ecommerce.project.security.jwt.AuthEntryPointJwt;
@@ -50,8 +52,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/api/auth/**").permitAll()
-//                        .requestMatchers("/api/public/**").permitAll()
-//                        .requestMatchers("/api/admin/**").permitAll()
+                                .requestMatchers("/api/public/**").permitAll()
+                                .requestMatchers("/api/admin/**").permitAll()
                                 .requestMatchers("/api/test/**").permitAll()
                                 .requestMatchers("/images/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
@@ -102,7 +104,7 @@ public class SecurityConfig {
 
     // Boilerplate initial seed to db for developing purposes
     @Bean
-    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, CartRepository cartRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             // Retrieve or create roles
             Role userRole = roleRepository.findByRoleName(RoleName.ROLE_USER)
@@ -127,21 +129,29 @@ public class SecurityConfig {
             Set<Role> sellerRoles = Set.of(sellerRole);
             Set<Role> adminRoles = Set.of(userRole, sellerRole, adminRole);
 
-
             // Create users if not already present
             if (!userRepository.existsByUserName("user1")) {
                 User user1 = new User("user1", "user1@example.com", passwordEncoder.encode("password1"));
+                Cart cart1 = new Cart(user1);
+
                 userRepository.save(user1);
+                cartRepository.save(cart1);
             }
 
             if (!userRepository.existsByUserName("seller1")) {
                 User seller1 = new User("seller1", "seller1@example.com", passwordEncoder.encode("password2"));
+                Cart cart2 = new Cart(seller1);
+
                 userRepository.save(seller1);
+                cartRepository.save(cart2);
             }
 
             if (!userRepository.existsByUserName("admin")) {
                 User admin = new User("admin", "admin@example.com", passwordEncoder.encode("adminPass"));
+                Cart cart3 = new Cart(admin);
+
                 userRepository.save(admin);
+                cartRepository.save(cart3);
             }
 
             // Update roles for existing users

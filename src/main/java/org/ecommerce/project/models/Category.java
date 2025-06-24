@@ -3,9 +3,7 @@ package org.ecommerce.project.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +12,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -24,5 +23,7 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
+    @EqualsAndHashCode.Include
+    @ToString.Exclude
     private Set<Product> products = new HashSet<>();
 }
