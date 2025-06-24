@@ -67,6 +67,6 @@ public class User {
     )
     private List<Address> addresses = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true, mappedBy = "user")
     private Cart cart;
 }

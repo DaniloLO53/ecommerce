@@ -37,6 +37,4 @@ public class AddressDTO {
     @NotBlank
     @Size(min = 6, message = "Zipcode name must have at least 6 characters")
     private String zipcode;
-
-    private List<UserDTO> userDTOS;
 }

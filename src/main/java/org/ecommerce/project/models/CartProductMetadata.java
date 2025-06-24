@@ -22,10 +22,10 @@ public class CartProductMetadata {
     @OneToOne
     private Product product;
 
-    @Positive
+    @Positive(message = "Quantity must be a positive number")
+    @Column(columnDefinition = "INTEGER DEFAULT 1")
     private Integer quantity;
 
-    @ManyToMany(mappedBy = "cartProductMetadata")
-    @ToString.Exclude
-    private Set<Cart> carts;
+    @ManyToOne
+    private Cart cart;
 }

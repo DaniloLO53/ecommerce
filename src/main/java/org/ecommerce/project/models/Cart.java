@@ -12,6 +12,10 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity(name = "carts")
 public class Cart {
+    public Cart(User user) {
+        this.user = user;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @EqualsAndHashCode.Include
@@ -20,13 +24,6 @@ public class Cart {
     @OneToOne
     private User user;
 
-    @NotNull
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(
-            name = "carts_carts_products_metadata",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "cart_product_metadata_id")
-    )
-    @ToString.Exclude
-    private Set<CartProductMetadata> cartProductMetadata;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CartProductMetadata> cartsProductsMetadata;
 }
