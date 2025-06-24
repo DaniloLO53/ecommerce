@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Entity(name = "products")
 @Data
 @NoArgsConstructor
@@ -40,4 +42,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private User user;
+
+    @OneToMany(mappedBy = "product")
+    private List<CartProductMetadata> cartProductMetadata;
 }
