@@ -26,11 +26,11 @@ public class UserDTO {
     @NotBlank
     private String password;
 
-    private Set<RoleDTO> roleDTOS;
+    private Set<RoleDTO> role;
 
-    private Set<ProductDTO> productDTOS;
+    private Set<ProductDTO> product;
 
-    private List<AddressDTO> addressDTOS;
+    private List<AddressDTO> address;
 
-    private CartDTO cartDTO;
+    private CartDTO cart;
 }
