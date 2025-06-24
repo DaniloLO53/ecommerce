@@ -192,8 +192,8 @@ public class AuthController {
 
         user.setRoles(roles);
 
-        cartRepository.save(cart);
         userRepository.save(user);
+        cartRepository.save(cart);
 
         return ResponseEntity.status(HttpStatus.OK).body(new APIResponse("User has been created successfully"));
     }
