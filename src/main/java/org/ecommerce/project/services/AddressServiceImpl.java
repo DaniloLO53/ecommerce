@@ -46,6 +46,17 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public AddressDTO getAddressById(Long addressId) {
+        Optional<Address> optionalAddress = addressRepository.findById(addressId);
+
+        if (optionalAddress.isPresent()) {
+            return modelMapper.map(optionalAddress.get(), AddressDTO.class);
+        }
+
+        throw new ResourceNotFoundException("Address", "id", addressId);
+     }
+
+    @Override
     public List<AddressDTO> getAllAddresses() {
         List<Address> allAddresses = addressRepository.findAll();
         return allAddresses
