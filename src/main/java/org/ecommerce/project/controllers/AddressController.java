@@ -49,11 +49,20 @@ public class AddressController {
     public ResponseEntity<AddressDTO> updateUserAddress(
             Authentication authentication,
             @PathVariable Long addressId,
-            @RequestBody AddressDTO addressDTO
-    ) {
+            @RequestBody AddressDTO addressDTO) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
         return ResponseEntity.status(HttpStatus.OK).body(addressService.updateAddress(userId, addressId, addressDTO));
+    }
+
+    @DeleteMapping("/addresses/{addressId}")
+    public ResponseEntity<String> deleteUserAddress(
+            Authentication authentication,
+            @PathVariable Long addressId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        return ResponseEntity.status(HttpStatus.OK).body(addressService.deleteUserAddress(userId, addressId));
     }
 }
