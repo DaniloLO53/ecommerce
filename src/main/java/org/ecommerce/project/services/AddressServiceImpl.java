@@ -10,14 +10,17 @@ import org.ecommerce.project.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AddressServiceImpl implements AddressService {
+    private final AddressRepository addressRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    public AddressServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+    public AddressServiceImpl(AddressRepository addressRepository, UserRepository userRepository, ModelMapper modelMapper) {
+        this.addressRepository = addressRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
     }
@@ -40,5 +43,14 @@ public class AddressServiceImpl implements AddressService {
         }
 
         throw new ResourceNotFoundException("User", "id", userId);
+    }
+
+    @Override
+    public List<AddressDTO> getAllAddresses() {
+        List<Address> allAddresses = addressRepository.findAll();
+        return allAddresses
+                .stream()
+                .map(address -> modelMapper.map(address, AddressDTO.class))
+                .toList();
     }
 }
