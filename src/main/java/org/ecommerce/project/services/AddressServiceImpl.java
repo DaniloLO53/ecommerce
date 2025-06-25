@@ -90,6 +90,20 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public String deleteUserAddress(Long userId, Long addressId) {
+        Address address = addressRepository
+                .findById(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
+
+        if (!address.getUser().getId().equals(userId)) {
+            throw new APIForbiddenException("User should only change own content");
+        }
+
+        addressRepository.deleteById(addressId);
+        return "Address has been deleted successfully";
+    }
+
+    @Override
     public List<AddressDTO> getAllAddresses() {
         List<Address> allAddresses = addressRepository.findAll();
 
