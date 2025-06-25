@@ -1,5 +1,6 @@
 package org.ecommerce.project.services;
 
+import jakarta.transaction.Transactional;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
 import org.ecommerce.project.models.Category;
 import org.ecommerce.project.repositories.CategoryRepository;
@@ -76,6 +77,8 @@ public class ProductServiceImpl implements ProductService {
         return getProductResponse(pageNumber, pageSize, page);
     }
 
+    @Override
+    @Transactional
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Product product = modelMapper.map(productDTO, Product.class);
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
@@ -89,6 +92,8 @@ public class ProductServiceImpl implements ProductService {
         throw new ResourceNotFoundException("Category", "id", categoryId);
     }
 
+    @Override
+    @Transactional
     public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
         Optional<Product> optionalExistingProduct = productRepository.findById(productId);
 
@@ -107,6 +112,8 @@ public class ProductServiceImpl implements ProductService {
         throw new ResourceNotFoundException("Product", "id", productId);
     }
 
+    @Override
+    @Transactional
     public ProductDTO deleteProduct(Long productId) {
         Optional<Product> optionalExistingProduct = productRepository.findById(productId);
 
@@ -119,6 +126,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductDTO updateProductImage(Long productId, MultipartFile image) {
         Optional<Product> optionalExistingProduct = productRepository.findById(productId);
 
