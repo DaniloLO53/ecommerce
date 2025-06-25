@@ -3,7 +3,6 @@ package org.ecommerce.project.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -15,14 +14,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Address {
-    public Address(String street, String building, String city, String state, String country, String zipcode) {
-        this.street = street;
-        this.building = building;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.zipcode = zipcode;
-    }
+//    public Address(String street, String building, String city, String state, String country, String zipcode) {
+//        this.street = street;
+//        this.building = building;
+//        this.city = city;
+//        this.state = state;
+//        this.country = country;
+//        this.zipcode = zipcode;
+//    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -52,7 +51,7 @@ public class Address {
     @Size(min = 6, message = "Zipcode name must have at least 6 characters")
     private String zipcode;
 
-//    @ManyToMany(mappedBy = "addresses")
-//    @ToString.Exclude
-//    private List<User> users = new ArrayList<>();
+    @ManyToMany(mappedBy = "addresses")
+    @ToString.Exclude
+    private List<User> users = new ArrayList<>();
 }
