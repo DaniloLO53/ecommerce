@@ -1,6 +1,7 @@
 package org.ecommerce.project.services;
 
 import jakarta.transaction.Transactional;
+import org.ecommerce.project.exceptions.APIConflictException;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
 import org.ecommerce.project.models.Cart;
 import org.ecommerce.project.models.CartProductMetadata;
@@ -42,6 +43,8 @@ public class CartServiceImpl implements CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
+        if (product.getQuantity() < quantity) throw new APIConflictException("Please, make an order with less than or equal to the quantity " + product.getQuantity());
+
         Cart userCart = cartRepository.findCartByUser_Id(userId);
 
         Optional<CartProductMetadata> existingMetadata = userCart.getCartsProductsMetadata().stream()
@@ -62,6 +65,9 @@ public class CartServiceImpl implements CartService {
         }
 
         Cart savedCart = cartRepository.save(userCart);
+
+        product.setQuantity(product.getQuantity() - quantity);
+        productRepository.save(product);
 
         return modelMapper.map(savedCart, CartDTO.class);
     }
