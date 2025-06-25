@@ -67,6 +67,7 @@ public class User {
     )
     private List<Address> addresses = new ArrayList<>();
 
+    @ToString.Exclude
     @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true, mappedBy = "user")
     private Cart cart;
 }
