@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
+// TODO: change product quantity when user ORDER product
 @Service
 public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
@@ -64,12 +67,19 @@ public class CartServiceImpl implements CartService {
             userCart.getCartsProductsMetadata().add(newMetadata);
         }
 
+//        product.setQuantity(product.getQuantity() - quantity);
+//        productRepository.save(product);
+
         Cart savedCart = cartRepository.save(userCart);
-
-        product.setQuantity(product.getQuantity() - quantity);
-        productRepository.save(product);
-
         return modelMapper.map(savedCart, CartDTO.class);
+
+//
+//        Set<CartProductMetadata> cartsProductsMetadata = userCart.getCartsProductsMetadata();
+//        Stream<ProductDTO> productDTOStream = cartsProductsMetadata.stream().map(item -> {
+//            ProductDTO productDTO = modelMapper.map(item.getProduct(), ProductDTO.class);
+//            productDTO.setQuantity(item.getQuantity() - quantity);
+//            return productDTO;
+//        });
     }
 
     @Override
@@ -85,6 +95,15 @@ public class CartServiceImpl implements CartService {
                 .findByCart_User_idAndProduct_Id(userId, productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
+        // Product quantity = 90
+        // Add to cart quantity = 5 -> Product quantity = 85 (90 - 5)
+        // Update cart quantity = 10 -> Product quantity =
+
+//        Product product = productRepository.findById(productId).get();
+
+//        product.setQuantity(product.getQuantity() - quantity);
+//        productRepository.save(product);
+
         cartProductMetadata.setQuantity(quantity);
         CartProductMetadata savedCartProductMetadata = cartProductMetadataRepository.save(cartProductMetadata);
 
@@ -94,9 +113,18 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public String deleteProductFromCart(Long userId, Long productId) {
-        cartProductMetadataRepository
-                .deleteByCart_User_idAndProduct_Id(userId, productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        Optional<CartProductMetadata> optionalCartProductMetadata = cartProductMetadataRepository.findByCart_User_idAndProduct_Id(userId, productId);
+
+        if (optionalCartProductMetadata.isPresent() && optionalProduct.isPresent()) {
+            cartProductMetadataRepository
+                    .deleteByCart_User_idAndProduct_Id(userId, productId);
+        } else {
+             throw new ResourceNotFoundException("Product", "id", productId);
+        }
+
+//        optionalProduct.get().setQuantity(optionalProduct.get().getQuantity() + optionalCartProductMetadata.get().getQuantity());
+//        productRepository.save(optionalProduct.get());
 
         return "Product has been deleted successfully";
     }
