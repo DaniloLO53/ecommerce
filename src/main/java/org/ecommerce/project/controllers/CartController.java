@@ -38,6 +38,28 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.getUserCart(userId));
     }
 
+    @PutMapping("/cart/products/{productId}/quantity/{quantity}")
+    public ResponseEntity<CartDTO> updateProductQuantity(
+            Authentication authentication,
+            @PathVariable Long productId,
+            @PathVariable Integer quantity) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.updateProductQuantity(userId, productId, quantity));
+    }
+
+    @DeleteMapping("/cart/products/{productId}")
+    public ResponseEntity<String> deleteProductFromCart(
+            Authentication authentication,
+            @PathVariable Long productId
+    ) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartService.deleteProductFromCart(userId, productId));
+    }
+
     @GetMapping("/carts")
     public ResponseEntity<List<CartDTO>> getAllCarts() {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.getAllCarts());

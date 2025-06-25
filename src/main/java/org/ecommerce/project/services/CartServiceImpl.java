@@ -1,5 +1,6 @@
 package org.ecommerce.project.services;
 
+import jakarta.transaction.Transactional;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
 import org.ecommerce.project.models.Cart;
 import org.ecommerce.project.models.CartProductMetadata;
@@ -35,6 +36,8 @@ public class CartServiceImpl implements CartService {
         this.modelMapper = modelMapper;
     }
 
+    @Override
+    @Transactional // it creates a safe container to ACID transactions on DB
     public CartDTO addProductToCart(Long userId, Long productId, Integer quantity) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
@@ -67,6 +70,29 @@ public class CartServiceImpl implements CartService {
     public CartDTO getUserCart(Long userId) {
         Cart cart = cartRepository.findCartByUser_Id(userId);
         return modelMapper.map(cart, CartDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public CartDTO updateProductQuantity(Long userId, Long productId, Integer quantity) {
+        CartProductMetadata cartProductMetadata = cartProductMetadataRepository
+                .findByCart_User_idAndProduct_Id(userId, productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
+
+        cartProductMetadata.setQuantity(quantity);
+        CartProductMetadata savedCartProductMetadata = cartProductMetadataRepository.save(cartProductMetadata);
+
+        return modelMapper.map(savedCartProductMetadata.getCart(), CartDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public String deleteProductFromCart(Long userId, Long productId) {
+        cartProductMetadataRepository
+                .deleteByCart_User_idAndProduct_Id(userId, productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
+
+        return "Product has been deleted successfully";
     }
 
     @Override

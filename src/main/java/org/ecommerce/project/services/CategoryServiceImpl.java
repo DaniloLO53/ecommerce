@@ -1,5 +1,6 @@
 package org.ecommerce.project.services;
 
+import jakarta.transaction.Transactional;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
 import org.ecommerce.project.models.Category;
 import org.ecommerce.project.payloads.DTOs.CategoryDTO;
@@ -26,6 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         Category category = modelMapper.map(categoryDTO, Category.class);
         Category savedCategory = categoryRepository.save(category);
@@ -33,6 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDTO updateCategory(Long categoryId, CategoryDTO categoryDTO) {
         Optional<Category> optionalSavedCategory = categoryRepository.findById(categoryId);
 
@@ -47,6 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDTO deleteCategory(Long id) {
         Optional<Category> optionalSavedCategory = categoryRepository.findById(id);
         if (optionalSavedCategory.isPresent()) {
