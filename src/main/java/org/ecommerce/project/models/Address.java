@@ -52,7 +52,7 @@ public class Address {
     @Size(min = 6, message = "Zipcode name must have at least 6 characters")
     private String zipcode;
 
-    @ManyToMany
-    @ToString.Exclude
-    private List<User> users = new ArrayList<>();
+//    @ManyToMany(mappedBy = "addresses")
+//    @ToString.Exclude
+//    private List<User> users = new ArrayList<>();
 }
