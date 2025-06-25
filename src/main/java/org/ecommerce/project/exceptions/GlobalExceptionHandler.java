@@ -64,4 +64,12 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
     }
+
+    @ExceptionHandler(APIForbiddenException.class)
+    public ResponseEntity<APIResponse> customAPIForbiddenException(APIForbiddenException e) {
+        String message = e.getMessage();
+        APIResponse apiResponse = new APIResponse(message);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponse);
+    }
 }

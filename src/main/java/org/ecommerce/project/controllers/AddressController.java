@@ -44,4 +44,16 @@ public class AddressController {
 
         return ResponseEntity.status(HttpStatus.OK).body(addressService.getAddressesByUser(userId));
     }
+
+    @PutMapping("/addresses/{addressId}")
+    public ResponseEntity<AddressDTO> updateUserAddress(
+            Authentication authentication,
+            @PathVariable Long addressId,
+            @RequestBody AddressDTO addressDTO
+    ) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        return ResponseEntity.status(HttpStatus.OK).body(addressService.updateAddress(userId, addressId, addressDTO));
+    }
 }
