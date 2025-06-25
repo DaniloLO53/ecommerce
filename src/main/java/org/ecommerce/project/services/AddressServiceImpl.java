@@ -1,6 +1,7 @@
 package org.ecommerce.project.services;
 
 import jakarta.transaction.Transactional;
+import org.ecommerce.project.exceptions.APIForbiddenException;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
 import org.ecommerce.project.models.Address;
 import org.ecommerce.project.models.User;
@@ -35,7 +36,7 @@ public class AddressServiceImpl implements AddressService {
             User user = optionalUser.get();
 
             user.getAddresses().add(address);
-            address.getUsers().add(user);
+            address.setUser(user);
 
             userRepository.save(user); // we save user instead of address because we defined user as the relationship owner at User model
 
@@ -58,12 +59,34 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressDTO> getAddressesByUser(Long userId) {
-        List<Address> addresses = addressRepository.findAllByUsers_Id(userId);
+        List<Address> addresses = addressRepository.findAllByUser_Id(userId);
 
         return addresses.
                 stream()
                 .map(address -> modelMapper.map(address, AddressDTO.class))
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public AddressDTO updateAddress(Long userId, Long addressId, AddressDTO addressDTO) {
+        Address address = addressRepository
+                .findById(addressId)
+                .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
+
+        if (!address.getUser().getId().equals(userId)) {
+            throw new APIForbiddenException("User should only change own content");
+        }
+
+        address.setCountry(addressDTO.getCountry());
+        address.setState(addressDTO.getState());
+        address.setCity(addressDTO.getCity());
+        address.setZipcode(addressDTO.getZipcode());
+        address.setStreet(addressDTO.getStreet());
+        address.setBuilding(addressDTO.getBuilding());
+
+        Address savedAddress = addressRepository.save(address);
+        return modelMapper.map(savedAddress, AddressDTO.class);
     }
 
     @Override
