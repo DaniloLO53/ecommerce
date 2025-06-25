@@ -70,6 +70,24 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public CartDTO updateProductQuantity(Long userId, Long productId, Integer quantity) {
+        CartProductMetadata cartProductMetadata = cartProductMetadataRepository
+                .findByCart_User_idAndProduct_Id(userId, productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
+
+        cartProductMetadata.setQuantity(quantity);
+        CartProductMetadata savedCartProductMetadata = cartProductMetadataRepository.save(cartProductMetadata);
+
+        return modelMapper.map(savedCartProductMetadata.getCart(), CartDTO.class);
+
+//        Product product = productRepository
+//                .findById(productId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
+
+
+    }
+
+    @Override
     public List<CartDTO> getAllCarts() {
         List<Cart> carts = cartRepository.findAll();
         return carts.stream().map(cart -> modelMapper.map(cart, CartDTO.class)).toList();
