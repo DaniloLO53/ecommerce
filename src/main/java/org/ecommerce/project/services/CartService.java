@@ -1,6 +1,7 @@
 package org.ecommerce.project.services;
 
 import org.ecommerce.project.payloads.DTOs.CartDTO;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
