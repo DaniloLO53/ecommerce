@@ -16,6 +16,7 @@ import java.util.Set;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NotBlank
@@ -23,7 +24,6 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    @EqualsAndHashCode.Include
     @ToString.Exclude
     private Set<Product> products = new HashSet<>();
 }
