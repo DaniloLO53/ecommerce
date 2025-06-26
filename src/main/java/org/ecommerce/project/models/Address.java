@@ -1,9 +1,11 @@
 package org.ecommerce.project.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -15,6 +17,7 @@ import java.util.Set;
 @Entity(name = "addresses")
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Address {
 //    public Address(String street, String building, String city, String state, String country, String zipcode) {
 //        this.street = street;
@@ -27,6 +30,7 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @NotBlank
@@ -57,6 +61,7 @@ public class Address {
     @ToString.Exclude
     private User user;
 
-    @OneToMany(mappedBy = "address")
+    @OneToMany(mappedBy = "address", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ToString.Exclude
     private Set<Order> orders = new HashSet<>();
 }
