@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "addresses")
 @Data
@@ -54,4 +56,7 @@ public class Address {
     @ManyToOne
     @ToString.Exclude
     private User user;
+
+    @OneToMany(mappedBy = "address")
+    private Set<Order> orders = new HashSet<>();
 }

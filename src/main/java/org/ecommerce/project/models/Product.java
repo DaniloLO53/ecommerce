@@ -45,4 +45,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<CartProductMetadata> cartProductMetadata;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems;
 }
