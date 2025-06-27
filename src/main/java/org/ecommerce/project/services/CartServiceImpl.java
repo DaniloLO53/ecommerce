@@ -106,18 +106,24 @@ public class CartServiceImpl implements CartService {
         return modelMapper.map(savedCartProductMetadata.getCart(), CartDTO.class);
     }
 
-    // TODO: Não deleta do banco de dados. Corrigir (solução que funciona está no Gemini)
+    // Removing from parents first, then the element itself. Otherwise, it doesn't remove (idk why)
+    // TODO: entender qual é a melhor maneira de lidar com operações no db (se é no pai ou no filho, se é no repository ou na entidade (com set, get) etc)
     @Override
     @Transactional
     public String deleteProductFromCart(Long userId, Long productId) {
-        int deletedRows = cartProductMetadataRepository
-                .deleteByCart_User_idAndProduct_Id(userId, productId);
+        CartProductMetadata itemToDelete = cartProductMetadataRepository
+                .findByCart_User_idAndProduct_Id(userId, productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        System.out.println("Deleted rows: " + deletedRows);
+        Product product = itemToDelete.getProduct();
+        Cart cart = itemToDelete.getCart();
 
-        if (deletedRows == 0) {
-            throw new ResourceNotFoundException("Product", "id", productId);
+        product.getCartProductMetadata().remove(itemToDelete);
+        if (cart != null) {
+            cart.getCartsProductsMetadata().remove(itemToDelete);
         }
+
+        cartProductMetadataRepository.delete(itemToDelete);
 
         return "Product has been deleted from cart successfully";
     }
