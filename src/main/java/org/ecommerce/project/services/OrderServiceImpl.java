@@ -1,6 +1,7 @@
 package org.ecommerce.project.services;
 
 import jakarta.transaction.Transactional;
+import org.ecommerce.project.exceptions.APIConflictException;
 import org.ecommerce.project.exceptions.ResourceNotFoundException;
 import org.ecommerce.project.models.*;
 import org.ecommerce.project.payloads.DTOs.*;
@@ -52,6 +53,15 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setOrderDate(LocalDate.now());
 
+        Payment payment = new Payment(
+                paymentMethod,orderRequest.getPgPaymentId(),
+                orderRequest.getPgStatus(),
+                orderRequest.getPgResponseMessage(),
+                orderRequest.getPgName()
+        );
+        payment.setOrder(order);
+        order.setPayment(payment);
+
         Optional<Address> address = addressRepository.findById(orderRequest.getAddressId());
         if (address.isPresent()) {
             order.setAddress(address.get());
@@ -67,10 +77,18 @@ public class OrderServiceImpl implements OrderService {
             order.getOrderItems().add(orderItem);
         });
 
+        order.getOrderItems().forEach(orderItem -> {
+            Product product = orderItem.getProduct();
+
+            if (product.getQuantity() < orderItem.getQuantity()) {
+                throw new APIConflictException("Please, select a quantity smaller than " + product.getQuantity());
+            }
+            product.setQuantity(product.getQuantity() - orderItem.getQuantity());
+        });
+
         Order savedOrder = orderRepository.save(order);
 
-        int deletedRows = cartProductMetadataRepository.deleteAllByCart_Id(cart.getId());
-        System.out.println("All deleted rows: " + deletedRows);
+        cartProductMetadataRepository.deleteAllByCart_Id(cart.getId());
 
         return modelMapper.map(savedOrder, OrderDTO.class);
     }
