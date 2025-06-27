@@ -7,8 +7,6 @@ import org.ecommerce.project.models.Cart;
 import org.ecommerce.project.models.CartProductMetadata;
 import org.ecommerce.project.models.Product;
 import org.ecommerce.project.payloads.DTOs.CartDTO;
-import org.ecommerce.project.payloads.DTOs.CartProductMetadataDTO;
-import org.ecommerce.project.payloads.DTOs.ProductDTO;
 import org.ecommerce.project.repositories.CartProductMetadataRepository;
 import org.ecommerce.project.repositories.CartRepository;
 import org.ecommerce.project.repositories.ProductRepository;
@@ -17,8 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
 
 // TODO: change product quantity when user ORDER product
 @Service
@@ -110,23 +106,26 @@ public class CartServiceImpl implements CartService {
         return modelMapper.map(savedCartProductMetadata.getCart(), CartDTO.class);
     }
 
+    // Removing from parents first, then the element itself. Otherwise, it doesn't remove (idk why)
+    // TODO: entender qual é a melhor maneira de lidar com operações no db (se é no pai ou no filho, se é no repository ou na entidade (com set, get) etc)
     @Override
     @Transactional
     public String deleteProductFromCart(Long userId, Long productId) {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        Optional<CartProductMetadata> optionalCartProductMetadata = cartProductMetadataRepository.findByCart_User_idAndProduct_Id(userId, productId);
+        CartProductMetadata itemToDelete = cartProductMetadataRepository
+                .findByCart_User_idAndProduct_Id(userId, productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        if (optionalCartProductMetadata.isPresent() && optionalProduct.isPresent()) {
-            cartProductMetadataRepository
-                    .deleteByCart_User_idAndProduct_Id(userId, productId);
-        } else {
-             throw new ResourceNotFoundException("Product", "id", productId);
+        Product product = itemToDelete.getProduct();
+        Cart cart = itemToDelete.getCart();
+
+        product.getCartProductMetadata().remove(itemToDelete);
+        if (cart != null) {
+            cart.getCartsProductsMetadata().remove(itemToDelete);
         }
 
-//        optionalProduct.get().setQuantity(optionalProduct.get().getQuantity() + optionalCartProductMetadata.get().getQuantity());
-//        productRepository.save(optionalProduct.get());
+        cartProductMetadataRepository.delete(itemToDelete);
 
-        return "Product has been deleted successfully";
+        return "Product has been deleted from cart successfully";
     }
 
     @Override

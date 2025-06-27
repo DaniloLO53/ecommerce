@@ -1,19 +1,21 @@
 package org.ecommerce.project.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "payments")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Payment {
-    public Payment(Long id, String pgPaymentId, String pgStatus, String pgResponseMessage, String pgName) {
-        this.id = id;
+    public Payment(String paymentMethod, String pgPaymentId, String pgStatus, String pgResponseMessage, String pgName) {
+        this.paymentMethod = paymentMethod;
         this.pgPaymentId = pgPaymentId;
         this.pgStatus = pgStatus;
         this.pgResponseMessage = pgResponseMessage;
@@ -39,5 +41,7 @@ public class Payment {
     private String pgName;
 
     @OneToOne
+    @ToString.Exclude
+    @JsonIgnore
     private Order order;
 }

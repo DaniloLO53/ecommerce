@@ -1,5 +1,6 @@
 package org.ecommerce.project.payloads.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
