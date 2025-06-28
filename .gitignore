@@ -34,3 +34,6 @@ build/
 
 ## Files upload
 images
+
+## production secrets
+!**/src/main/resources/application-prod.properties
