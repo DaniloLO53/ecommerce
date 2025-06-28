@@ -36,4 +36,4 @@ build/
 images
 
 ## production secrets
-!**/src/main/resources/application-prod.properties
+/src/main/resources/application-prod.properties
